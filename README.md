@@ -1,6 +1,6 @@
 # MTG ProxyGen (A4 PDF)
 
-**Wersja:** 1.2.0
+**Wersja:** 1.3.0
 
 Generator PDF do proxy kart MTG w dwóch formatach:
 
@@ -130,6 +130,18 @@ Przydatne opcje:
 - `--print-settings` – wypisuje krótką checklistę ustawień druku duplex (nie zmienia PDF)
 - `--dry-run` – pokazuje wybrany layout i liczbę stron bez generowania PDF
 - `--calibration-sheet` – generuje 2-stronicowy PDF kalibracyjny (markery front/back zamiast grafik)
+- `--preflight` – sprawdza efektywną rozdzielczość DPI i crop bez generowania PDF
+- `--min-dpi 300` – docelowa efektywna rozdzielczość dla preflight (domyślnie 300 DPI)
+
+### Kontrola jakości DPI
+
+Przed drukiem uruchom preflight dla tych samych opcji, z których wygenerujesz PDF:
+
+```powershell
+.\.venv\Scripts\python .\planechase_proxygen.py --card-format standard --card-orientation portrait --preflight --min-dpi 300
+```
+
+Raport liczy **efektywne DPI po dopasowaniu grafiki do fizycznego rozmiaru karty**, a nie tylko odczytuje metadane z pliku. Oznacza też obrazy z dużym cropem przy trybie `cover`.
 
 ## Duplex: szybkie ustawienia
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.0 - 2026-06-26
+
+### Added
+
+- Dodano preflight jakości obrazów: `--preflight` oblicza efektywne DPI po skalowaniu do docelowego rozmiaru karty.
+- Dodano `--min-dpi` z domyślnym progiem 300 DPI oraz wykrywanie silnego cropu dla `cover`.
+- Dodano pole i akcję `Preflight quality` w GUI.
+
+### Changed
+
+- Ostrzeżenia renderowania korzystają z tej samej kalkulacji DPI co preflight.
+
 ## 1.2.0 - 2026-06-26
 
 ### Added

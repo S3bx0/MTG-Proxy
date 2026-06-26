@@ -12,6 +12,7 @@ from .card_formats import DEFAULT_CARD_FORMAT
 from .duplex import back_slot_map
 from .layout import compute_layout, page_slots
 from .pairing import build_back_list
+from .quality import assess_dimensions
 
 
 CARD_W_MM = DEFAULT_CARD_FORMAT.portrait_width_mm
@@ -24,18 +25,29 @@ def warn_if_low_res(
     path: Path,
     card_w_mm: float = CARD_W_MM,
     card_h_mm: float = CARD_H_MM,
+    fit: str,
 ) -> None:
     w_px, h_px = img.size
-
-    dpi_x = w_px / (card_w_mm / 25.4)
-    dpi_y = h_px / (card_h_mm / 25.4)
-    dpi = min(dpi_x, dpi_y)
+    dpi, crop_percent = assess_dimensions(
+        width_px=w_px,
+        height_px=h_px,
+        card_w_mm=card_w_mm,
+        card_h_mm=card_h_mm,
+        fit=fit,
+    )
 
     if dpi < 250:
         import sys
 
         print(
             f"[WARN] Low resolution for print: {path.name} ({w_px}x{h_px}px, ~{dpi:.0f} DPI at {card_w_mm:.0f}x{card_h_mm:.0f}mm).",
+            file=sys.stderr,
+        )
+    if crop_percent >= 15.0:
+        import sys
+
+        print(
+            f"[WARN] Strong cover crop: {path.name} ({crop_percent:.1f}% of source area is outside the card box).",
             file=sys.stderr,
         )
 
@@ -160,7 +172,7 @@ def generate_pdf(
                 c.translate(front_dx_pt, front_dy_pt)
             for i, (front_p, _back_p) in enumerate(page_pairs):
                 img = load_image_for_pdf(front_p, back_transform="none")
-                warn_if_low_res(img, path=front_p, card_w_mm=card_w_mm, card_h_mm=card_h_mm)
+                warn_if_low_res(img, path=front_p, card_w_mm=card_w_mm, card_h_mm=card_h_mm, fit=fit)
                 x, y = slots[i]
                 draw_card_image(c, img=img, x_pt=x, y_pt=y, w_pt=layout.card_w_pt, h_pt=layout.card_h_pt, fit=fit)
             c.restoreState()
@@ -171,7 +183,7 @@ def generate_pdf(
                 c.translate(back_dx_pt, back_dy_pt)
             for i, (_front_p, back_p) in enumerate(page_pairs):
                 img = load_image_for_pdf(back_p, back_transform=back_transform)
-                warn_if_low_res(img, path=back_p, card_w_mm=card_w_mm, card_h_mm=card_h_mm)
+                warn_if_low_res(img, path=back_p, card_w_mm=card_w_mm, card_h_mm=card_h_mm, fit=fit)
                 x, y = slots[back_map[i]]
                 draw_card_image(c, img=img, x_pt=x, y_pt=y, w_pt=layout.card_w_pt, h_pt=layout.card_h_pt, fit=fit)
             c.restoreState()
@@ -190,7 +202,7 @@ def generate_pdf(
                 c.translate(front_dx_pt, front_dy_pt)
             for i, front_p in enumerate(page_fronts):
                 img = load_image_for_pdf(front_p, back_transform="none")
-                warn_if_low_res(img, path=front_p, card_w_mm=card_w_mm, card_h_mm=card_h_mm)
+                warn_if_low_res(img, path=front_p, card_w_mm=card_w_mm, card_h_mm=card_h_mm, fit=fit)
                 x, y = slots[i]
                 draw_card_image(c, img=img, x_pt=x, y_pt=y, w_pt=layout.card_w_pt, h_pt=layout.card_h_pt, fit=fit)
             c.restoreState()
@@ -202,7 +214,7 @@ def generate_pdf(
                 c.translate(back_dx_pt, back_dy_pt)
             for i, back_p in enumerate(page_backs):
                 img = load_image_for_pdf(back_p, back_transform=back_transform)
-                warn_if_low_res(img, path=back_p, card_w_mm=card_w_mm, card_h_mm=card_h_mm)
+                warn_if_low_res(img, path=back_p, card_w_mm=card_w_mm, card_h_mm=card_h_mm, fit=fit)
                 x, y = slots[back_map[i]]
                 draw_card_image(c, img=img, x_pt=x, y_pt=y, w_pt=layout.card_w_pt, h_pt=layout.card_h_pt, fit=fit)
             c.restoreState()

@@ -43,6 +43,10 @@
                   <label class="form-label">Margin (mm)</label>
                   <input class="form-control" name="margin_mm" value="{{ defaults.get('margin_mm','') }}" />
                 </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label">Docelowe DPI</label>
+                  <input class="form-control" name="min_dpi" value="{{ defaults.get('min_dpi','300') }}" />
+                </div>
 
                 <div class="col-6 col-md-3">
                   <label class="form-label">Page</label>
@@ -153,6 +157,7 @@
                   <button class="btn btn-outline-secondary" type="submit" name="action" value="undo_renames_preview">Undo renames (dry-run)</button>
                   <button class="btn btn-outline-warning" type="submit" name="action" value="undo_renames_yes">Undo renames NOW</button>
                   <button class="btn btn-outline-primary" type="submit" name="action" value="dry_run">Dry run</button>
+                  <button class="btn btn-outline-info" type="submit" name="action" value="preflight">Preflight quality</button>
                   <button class="btn btn-outline-secondary" type="submit" name="action" value="print_settings">Print settings</button>
                   <button class="btn btn-outline-success" type="submit" name="action" value="write_config">Write config (settings.json)</button>
                 </div>

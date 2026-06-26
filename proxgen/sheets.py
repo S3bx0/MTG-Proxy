@@ -41,7 +41,7 @@ def generate_repeated_front_sheet(
     image = load_image_for_pdf(image_path, back_transform="none")
 
     try:
-        warn_if_low_res(image, path=image_path, card_w_mm=card_w_mm, card_h_mm=card_h_mm)
+        warn_if_low_res(image, path=image_path, card_w_mm=card_w_mm, card_h_mm=card_h_mm, fit="cover")
         out_pdf.parent.mkdir(parents=True, exist_ok=True)
         pdf = canvas.Canvas(str(out_pdf), pagesize=layout.page_size_pt)
 

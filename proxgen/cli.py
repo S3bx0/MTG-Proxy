@@ -21,10 +21,11 @@ from .pairing import (
     undo_last_rename_batch,
     write_powershell_rename_script,
 )
+from .quality import assess_unique_images, preflight_level
 from .render import generate_pdf
 
 
-APP_VERSION = "1.2.0"
+APP_VERSION = "1.3.0"
 
 REF_PX_PER_MM = 11.81
 SUPPORTED_EXTS = {".jpg", ".jpeg", ".png"}
@@ -126,6 +127,7 @@ def parse_args_with_config(argv: Sequence[str]) -> argparse.Namespace:
     )
     p.add_argument("--print-settings", action="store_true", help="Print a short duplex printing checklist (does not change output).")
     p.add_argument("--dry-run", action="store_true", help="Do everything except generating the PDF (shows chosen layout and estimated page count).")
+    p.add_argument("--preflight", action="store_true", help="Analyze effective print DPI and cover crop without generating a PDF.")
     p.add_argument("--calibration-sheet", action="store_true", help="Generate a 2-page calibration PDF (front/back slot markers) instead of card images.")
     p.add_argument("--suggest-back-renames", action="store_true", help="Print suggested back filenames to satisfy strict pairing.")
     p.add_argument(
@@ -157,6 +159,7 @@ def parse_args_with_config(argv: Sequence[str]) -> argparse.Namespace:
 
     p.add_argument("--gap-mm", type=float, default=float(config.get("gap_mm", 3.0)), help="Gap between cards in mm (recommended 2-3)")
     p.add_argument("--margin-mm", type=float, default=float(config.get("margin_mm", 5.0)), help="Page margin in mm (printer safe area). Use 0 for borderless printers.")
+    p.add_argument("--min-dpi", type=float, default=float(config.get("min_dpi", 300.0)), help="Target effective DPI used by --preflight (default: 300)")
 
     p.add_argument("--page", choices=["auto", "portrait", "landscape"], default=str(config.get("page", "auto")), help="A4 orientation. 'auto' picks the layout with the most cards per page.")
     p.add_argument("--fit", choices=["contain", "cover"], default=str(config.get("fit", "cover")), help="How to fit images into the selected card box")
@@ -182,6 +185,7 @@ def build_effective_config_dict(args: argparse.Namespace) -> dict:
         "page": args.page,
         "gap_mm": float(args.gap_mm),
         "margin_mm": float(args.margin_mm),
+        "min_dpi": float(args.min_dpi),
         "card_format": args.card_format,
         "card_orientation": args.card_orientation,
         "fit": args.fit,
@@ -209,6 +213,41 @@ def print_duplex_checklist(*, duplex_mode: str, back_placement: str, back_transf
     print(f"- back_placement={back_placement} (slot mapping)")
     print(f"- back_transform={back_transform} (image orientation)")
     print("\nTip: If alignment drifts between prints, that's printer duplex registration variability.")
+
+
+def print_quality_preflight(
+    *,
+    image_paths: List[Path],
+    card_w_mm: float,
+    card_h_mm: float,
+    fit: str,
+    min_dpi: float,
+) -> None:
+    assessments = assess_unique_images(
+        image_paths,
+        card_w_mm=card_w_mm,
+        card_h_mm=card_h_mm,
+        fit=fit,
+    )
+    print("\n=== IMAGE QUALITY PREFLIGHT ===")
+    print(f"Target: {card_w_mm:.1f}x{card_h_mm:.1f}mm, fit={fit}, target DPI={min_dpi:.0f}")
+
+    counts = {"OK": 0, "WARN": 0, "LOW": 0}
+    for item in assessments:
+        level = preflight_level(
+            effective_dpi=item.effective_dpi,
+            crop_percent=item.crop_percent,
+            min_dpi=min_dpi,
+        )
+        counts[level] += 1
+        crop_note = f", cover crop={item.crop_percent:.1f}%" if item.crop_percent > 0.05 else ""
+        print(
+            f"[{level}] {item.path.name}: {item.width_px}x{item.height_px}px, "
+            f"effective={item.effective_dpi:.0f} DPI{crop_note}"
+        )
+
+    print(f"Summary: {len(assessments)} unique image(s), OK={counts['OK']} WARN={counts['WARN']} LOW={counts['LOW']}")
+    print("Note: effective DPI is calculated after scaling to the physical card size; embedded DPI metadata is ignored.")
 
 
 def estimate_total_pages(*, fronts_count: int, per_page: int, duplex_mode: str) -> Tuple[int, int, int]:
@@ -504,9 +543,27 @@ def main(argv: Sequence[str]) -> int:
         f"back_pairing={args.back_pairing} "
         f"back_transform={args.back_transform} back_placement={effective_back_placement} "
         f"front_offset_x_mm={args.front_offset_x_mm} front_offset_y_mm={args.front_offset_y_mm} "
-        f"back_offset_x_mm={args.back_offset_x_mm} back_offset_y_mm={args.back_offset_y_mm}"
+        f"back_offset_x_mm={args.back_offset_x_mm} back_offset_y_mm={args.back_offset_y_mm} min_dpi={args.min_dpi}"
     )
     print(f"Inputs: fronts={len(fronts)} backs={len(backs)}")
+
+    if args.min_dpi <= 0:
+        print("Quality error: min_dpi must be > 0", file=sys.stderr)
+        return 2
+
+    if args.preflight:
+        try:
+            print_quality_preflight(
+                image_paths=fronts + backs,
+                card_w_mm=card_w_mm,
+                card_h_mm=card_h_mm,
+                fit=args.fit,
+                min_dpi=args.min_dpi,
+            )
+        except Exception as e:
+            print(f"Quality preflight error: {e}", file=sys.stderr)
+            return 2
+        return 0
 
     if args.write_config is not None:
         if args.write_config == "":

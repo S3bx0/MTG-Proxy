@@ -35,6 +35,7 @@ UI_DEFAULTS = {
     "back_placement": "auto",
     "gap_mm": "3.0",
     "margin_mm": "5.0",
+    "min_dpi": "300",
     "front_offset_x_mm": "0.0",
     "front_offset_y_mm": "0.0",
     "back_offset_x_mm": "0.0",
@@ -97,6 +98,7 @@ def build_common_args(form: dict) -> List[str]:
     for key, flag in [
         ("gap_mm", "--gap-mm"),
         ("margin_mm", "--margin-mm"),
+        ("min_dpi", "--min-dpi"),
         ("front_offset_x_mm", "--front-offset-x-mm"),
         ("front_offset_y_mm", "--front-offset-y-mm"),
         ("back_offset_x_mm", "--back-offset-x-mm"),
@@ -151,6 +153,7 @@ def load_ui_defaults() -> dict:
     for key in [
         "gap_mm",
         "margin_mm",
+        "min_dpi",
         "front_offset_x_mm",
         "front_offset_y_mm",
         "back_offset_x_mm",
@@ -314,6 +317,8 @@ def create_app() -> Flask:
 
         if action == "dry_run":
             args = ["--dry-run", "--print-settings"] + args
+        elif action == "preflight":
+            args = ["--preflight"] + args
         elif action == "generate":
             # no extra flags
             pass
