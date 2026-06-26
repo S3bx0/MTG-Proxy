@@ -1,0 +1,23 @@
+{
+  "front_dir": "input/front",
+  "back_dir": "input/back",
+  "out": "output/planechase_proxies.pdf",
+
+  "page": "auto",
+  "gap_mm": 3.0,
+  "margin_mm": 5.0,
+
+  "card_format": "planechase",
+  "card_orientation": "auto",
+  "fit": "cover",
+
+  "duplex_mode": "paired",
+  "back_pairing": "smart",
+  "back_transform": "rotate180",
+  "back_placement": "auto",
+
+  "front_offset_x_mm": 0.0,
+  "front_offset_y_mm": 0.0,
+  "back_offset_x_mm": 0.0,
+  "back_offset_y_mm": 0.0
+}

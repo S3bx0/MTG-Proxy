@@ -1,0 +1,11 @@
+# Python environments and caches
+.venv/
+__pycache__/
+**/__pycache__/
+.mypy_cache/
+.pytest_cache/
+*.py[cod]
+Thumbs.db
+
+# Generated runtime artifacts
+output/
