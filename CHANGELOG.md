@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.1 - 2026-06-29
+
+### Changed
+
+- Skorygowano format `standard` do typowego rozmiaru MTG 63.5×88.9 mm (2.5×3.5 cala), żeby wydruki nie wychodziły minimalnie za małe.
+
 ## 1.3.0 - 2026-06-26
 
 ### Added

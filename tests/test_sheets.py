@@ -9,7 +9,7 @@ from proxgen.sheets import generate_repeated_front_sheet
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-GOBLIN_TOKEN = PROJECT_ROOT / "goblin_token_mtg_clean_clear_red_63x88mm_300dpi.jpg"
+GOBLIN_TOKEN = PROJECT_ROOT / "goblin_token_mtg_clean_clear_red_750x1050.jpg"
 
 
 class RepeatedSheetTests(unittest.TestCase):
@@ -17,7 +17,7 @@ class RepeatedSheetTests(unittest.TestCase):
         self.assertTrue(GOBLIN_TOKEN.exists(), "Goblin token test image is missing")
 
         with Image.open(GOBLIN_TOKEN) as image:
-            self.assertEqual(image.size, (744, 1039))
+            self.assertEqual(image.size, (750, 1050))
             self.assertEqual(image.info.get("dpi"), (300, 300))
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -28,8 +28,8 @@ class RepeatedSheetTests(unittest.TestCase):
                 copies=9,
                 gap_mm=0.2,
                 margin_mm=0.0,
-                card_w_mm=63.0,
-                card_h_mm=88.0,
+                card_w_mm=63.5,
+                card_h_mm=88.9,
             )
             reader = PdfReader(str(output))
 

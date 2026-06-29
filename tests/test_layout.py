@@ -29,8 +29,8 @@ class LayoutTests(unittest.TestCase):
             page_portrait=True,
             margin_mm=5.0,
             gap_mm=3.0,
-            card_w_mm=63.0,
-            card_h_mm=88.0,
+            card_w_mm=63.5,
+            card_h_mm=88.9,
         )
         self.assertEqual((layout.cols, layout.rows, layout.per_page), (3, 3, 9))
 

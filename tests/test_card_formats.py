@@ -15,7 +15,7 @@ class CardFormatTests(unittest.TestCase):
         )
 
         self.assertEqual(orientation, "portrait")
-        self.assertEqual((width_mm, height_mm), (63.0, 88.0))
+        self.assertEqual((width_mm, height_mm), (63.5, 88.9))
 
     def test_auto_orientation_without_images_defaults_to_portrait(self):
         orientation, width_mm, height_mm = resolve_card_dimensions_mm(

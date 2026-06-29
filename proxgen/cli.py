@@ -25,7 +25,7 @@ from .quality import assess_unique_images, preflight_level
 from .render import generate_pdf
 
 
-APP_VERSION = "1.3.0"
+APP_VERSION = "1.3.1"
 
 REF_PX_PER_MM = 11.81
 SUPPORTED_EXTS = {".jpg", ".jpeg", ".png"}
@@ -107,7 +107,7 @@ def parse_args_with_config(argv: Sequence[str]) -> argparse.Namespace:
         description=(
             "MTG Proxy PDF generator (A4)\n"
             "- Reads JPG/PNG from front and back folders\n"
-            "- Supports Planechase (88x126mm) and standard MTG (63x88mm) cards\n"
+            "- Supports Planechase (88x126mm) and standard MTG (63.5x88.9mm) cards\n"
             "- Exports a print-ready PDF for duplex printing"
         )
     )
@@ -154,7 +154,7 @@ def parse_args_with_config(argv: Sequence[str]) -> argparse.Namespace:
         "--card-format",
         choices=sorted(CARD_FORMATS),
         default=str(config.get("card_format", DEFAULT_CARD_FORMAT.key)),
-        help="Card size: planechase (88x126mm) or standard (63x88mm).",
+        help="Card size: planechase (88x126mm) or standard MTG (63.5x88.9mm).",
     )
 
     p.add_argument("--gap-mm", type=float, default=float(config.get("gap_mm", 3.0)), help="Gap between cards in mm (recommended 2-3)")

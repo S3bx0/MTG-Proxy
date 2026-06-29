@@ -1,11 +1,11 @@
 # MTG ProxyGen (A4 PDF)
 
-**Wersja:** 1.3.0
+**Wersja:** 1.3.1
 
 Generator PDF do proxy kart MTG w dwóch formatach:
 
 - **Planechase oversized:** 88 × 126 mm
-- **Standard MTG:** 63 × 88 mm
+- **Standard MTG:** 63.5 × 88.9 mm
 
 - Wczytuje obrazy (JPG/PNG) z 2 folderów: fronty i tyły
 - Układa maksymalnie dużo kart na stronie **A4** z przerwą (domyślnie 3 mm)
@@ -115,7 +115,7 @@ Przydatne opcje:
 - `--margin-mm 0` (jeśli masz drukarkę borderless) albo zostaw domyślne `5`
 - `--page auto` (domyślne) – wybiera portrait/landscape tak, żeby weszło jak najwięcej kart na stronę
 - `--card-format planechase` (domyślne) – Planechase oversized 88×126 mm
-- `--card-format standard` – standardowa karta MTG 63×88 mm
+- `--card-format standard` – standardowa karta MTG 63.5×88.9 mm
 - `--card-orientation auto` (domyślne) – dobiera portrait/landscape na podstawie obrazków frontów
 - `--back-placement auto` (domyślne) – dobiera mapowanie slotów tyłu do orientacji strony (`mirror-x` dla portrait, `mirror-y` dla landscape)
 - `--back-pairing smart` (domyślne) – dopasowanie tyłów do frontów po nazwie z fallbackami
@@ -230,8 +230,8 @@ Jeśli dobierzesz offsety w konsoli, możesz je zapisać do pliku config jednym 
 
 ## Notatka o rozdzielczości
 
-Program skaluje obraz do **88×126 mm** w PDF.
-Jeśli pliki mają mało pikseli, w konsoli pojawi się ostrzeżenie.
+Program skaluje obraz do fizycznego rozmiaru wybranego formatu karty w PDF, np. **88×126 mm** dla Planechase albo **63.5×88.9 mm** dla standardowej karty MTG.
+Jeśli pliki mają mało pikseli, w konsoli pojawi się ostrzeżenie albo raport `--preflight` pokaże zbyt niskie efektywne DPI.
 
 ## Testy
 

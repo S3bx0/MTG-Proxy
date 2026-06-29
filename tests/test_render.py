@@ -36,8 +36,8 @@ class RenderTests(unittest.TestCase):
                 back_pairing="smart",
                 back_transform="rotate180",
                 back_placement="mirror-x",
-                card_w_mm=63.0,
-                card_h_mm=88.0,
+                card_w_mm=63.5,
+                card_h_mm=88.9,
             )
 
             reader = PdfReader(str(output))

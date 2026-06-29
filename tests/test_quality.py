@@ -6,10 +6,10 @@ from proxgen.quality import assess_dimensions, preflight_level, quality_level
 class QualityTests(unittest.TestCase):
     def test_standard_300_dpi_source_is_adequate_for_cover(self):
         dpi, crop_percent = assess_dimensions(
-            width_px=744,
-            height_px=1039,
-            card_w_mm=63.0,
-            card_h_mm=88.0,
+            width_px=750,
+            height_px=1050,
+            card_w_mm=63.5,
+            card_h_mm=88.9,
             fit="cover",
         )
 
@@ -21,24 +21,24 @@ class QualityTests(unittest.TestCase):
         dpi, crop_percent = assess_dimensions(
             width_px=1000,
             height_px=1000,
-            card_w_mm=63.0,
-            card_h_mm=88.0,
+            card_w_mm=63.5,
+            card_h_mm=88.9,
             fit="cover",
         )
 
-        self.assertAlmostEqual(dpi, 288.6, places=1)
+        self.assertAlmostEqual(dpi, 285.7, places=1)
         self.assertGreater(crop_percent, 28.0)
 
     def test_contain_preserves_the_full_image(self):
         dpi, crop_percent = assess_dimensions(
             width_px=1000,
             height_px=1000,
-            card_w_mm=63.0,
-            card_h_mm=88.0,
+            card_w_mm=63.5,
+            card_h_mm=88.9,
             fit="contain",
         )
 
-        self.assertAlmostEqual(dpi, 403.2, places=1)
+        self.assertAlmostEqual(dpi, 400.0, places=1)
         self.assertEqual(crop_percent, 0.0)
 
     def test_quality_levels(self):

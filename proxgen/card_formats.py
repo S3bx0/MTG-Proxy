@@ -20,8 +20,8 @@ PLANECHASE = CardFormat(
 STANDARD_MTG = CardFormat(
     key="standard",
     label="Standard MTG",
-    portrait_width_mm=63.0,
-    portrait_height_mm=88.0,
+    portrait_width_mm=63.5,
+    portrait_height_mm=88.9,
 )
 
 CARD_FORMATS: dict[str, CardFormat] = {
